@@ -1,0 +1,6 @@
+{
+  "name": "本草智联",
+  "description": "AI赋能中医健康管理与道地药材可信直供。提供体质分析、舌诊问卷、药食交互风险分析、数字护照及全链路中药溯源，为您构建纯净、权威的数字化康养生活。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
