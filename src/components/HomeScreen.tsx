@@ -234,7 +234,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* Greeting & Date */}
       <section className="mb-6 pt-2">
         <h2 className="font-headline font-bold text-[32px] text-primary mb-1">
-          {getGreeting()}，{userProfile.name}
+          下午好
         </h2>
         <div className="font-body text-[15px] text-on-surface-variant flex justify-between items-center">
           <span>今天适合温和调理</span>

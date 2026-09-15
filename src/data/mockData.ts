@@ -53,7 +53,7 @@ export const PRODUCTS: HerbProduct[] = [
         { id: 2, title: 'AI 智能入库扫描', description: '外观切片纹理及菊花心识别合格，等级判定为特级', time: '2026-06-20 11:30', icon: 'document_scanner' },
         { id: 3, title: '专家品质复核', description: '通过无硫熏检测，多糖含量高达2.4%', time: '2026-06-25 15:00', icon: 'psychology' },
         { id: 4, title: '数字护照生成', description: '溯源及检测报告上链，生成专属密码防伪防篡改', time: '2026-07-01 08:30', icon: 'verified' },
-        { id: 5, title: '上架销售', description: '本草智联官方商城自营直供', time: '2026-07-05 10:00', icon: 'storefront' }
+        { id: 5, title: '上架销售', description: '颐膳坊官方商城自营直供', time: '2026-07-05 10:00', icon: 'storefront' }
       ]
     }
   },
@@ -78,7 +78,7 @@ export const PRODUCTS: HerbProduct[] = [
         { id: 2, title: 'AI 智能入库扫描', description: '红外线无损检测，果实饱满度符合特优标准', time: '2026-06-22 13:45', icon: 'document_scanner' },
         { id: 3, title: '专家品质复核', description: '未检测出任何农药残留，免洗直接食用级别', time: '2026-06-27 10:00', icon: 'psychology' },
         { id: 4, title: '数字护照生成', description: '唯一溯源码生成并部署在智能合约中', time: '2026-07-02 10:15', icon: 'verified' },
-        { id: 5, title: '上架销售', description: '本草智联精选道地商城', time: '2026-07-06 09:00', icon: 'storefront' }
+        { id: 5, title: '上架销售', description: '颐膳坊精选道地商城', time: '2026-07-06 09:00', icon: 'storefront' }
       ]
     }
   },
@@ -128,7 +128,7 @@ export const PRODUCTS: HerbProduct[] = [
         { id: 2, title: 'AI 智能入库扫描', description: '外观特征（芦、艼、体、纹、须）符合野山参，无拼接损坏', time: '2023-09-25 14:20', icon: 'document_scanner' },
         { id: 3, title: '专家品质复核', description: '国家药典委员会专家团队抽检认证，皂苷含量极高', time: '2023-10-05 10:00', icon: 'psychology' },
         { id: 4, title: '数字护照生成', description: '溯源及国检信息上链，生成唯一哈希标识，不可篡改', time: '2023-10-15 08:30', icon: 'verified' },
-        { id: 5, title: '上架销售', description: '本草智联官方商城官方特供，区块链实体确权', time: '2023-10-18 10:00', icon: 'storefront' }
+        { id: 5, title: '上架销售', description: '颐膳坊官方商城官方特供，区块链实体确权', time: '2023-10-18 10:00', icon: 'storefront' }
       ]
     }
   }

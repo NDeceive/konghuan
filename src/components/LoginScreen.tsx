@@ -97,7 +97,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
           <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4">
             <div className="flex items-center justify-center lg:justify-start space-x-2 mb-2">
               <span className="material-symbols-outlined text-[48px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>eco</span>
-              <h1 className="font-headline font-bold text-[32px] text-primary tracking-tight">本草智联</h1>
+              <h1 className="font-headline font-bold text-[32px] text-primary tracking-tight">颐膳坊</h1>
             </div>
             <h2 className="font-headline font-semibold text-[22px] md:text-[26px] text-on-surface-variant max-w-lg leading-tight">
               AI 赋能中医健康辅助与<br/>道地药材可信直供

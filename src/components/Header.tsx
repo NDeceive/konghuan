@@ -21,8 +21,8 @@ export const Header: React.FC<HeaderProps> = ({ currentScreen, onNavigate, userP
 
   const getTitle = () => {
     switch (currentScreen) {
-      case 'LOGIN': return '登录 - 本草智联';
-      case 'HOME': return '本草智联';
+      case 'LOGIN': return '登录 - 颐膳坊';
+      case 'HOME': return '颐膳坊';
       case 'STEPPER': return '完善健康档案';
       case 'ASSESSMENT_RESULTS': return 'AI 健康评估结果';
       case 'RISK_DETAILS': return '药食风险详情';
@@ -31,7 +31,7 @@ export const Header: React.FC<HeaderProps> = ({ currentScreen, onNavigate, userP
       case 'PRODUCT_DETAIL': return '产品详情';
       case 'CONFIRM_ORDER': return '确认订单';
       case 'PROFILE': return '我的';
-      default: return '本草智联';
+      default: return '颐膳坊';
     }
   };
 

@@ -183,7 +183,7 @@ export const RiskAnalysisScreen: React.FC<RiskAnalysisScreenProps> = ({ onNaviga
               <span className={`font-sans text-[11px] px-2.5 py-0.5 rounded-full font-bold shadow-sm ${currentStyle.badge}`}>
                 {result.riskLevelText}
               </span>
-              <span className="font-sans text-[11px] text-outline font-medium">诊断源：本草AI交互智联库</span>
+              <span className="font-sans text-[11px] text-outline font-medium">诊断源：颐膳坊AI药食智库</span>
             </div>
 
             <div className="flex items-start gap-2.5 mb-3">

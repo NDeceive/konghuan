@@ -111,26 +111,9 @@ export default function App() {
 
   const handleUpdateRole = (role: UserRole) => {
     if (userProfile) {
-      let memberLabel = '普通会员 (Ordinary Member)';
-      let avatarImg = INITIAL_USER.avatar;
-      let userName = '李心悦';
-
-      if (role === 'PARTNER') {
-        userName = '张德茂 (合作商户)';
-        memberLabel = '合伙人 · 中医种植大户';
-        avatarImg = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=120';
-      } else if (role === 'ADMIN') {
-        userName = '李大夫 (本草管理员)';
-        memberLabel = '系统首席审核官';
-        avatarImg = 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=120';
-      }
-
       setUserProfile({
         ...userProfile,
-        name: userName,
         role: role,
-        avatar: avatarImg,
-        memberStatus: memberLabel,
       });
     }
   };
