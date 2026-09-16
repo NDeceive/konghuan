@@ -268,18 +268,24 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <button 
               onClick={() => onNavigate('ASSESSMENT_RESULTS')}
-              className="flex-1 py-2 rounded-xl border border-primary text-primary hover:bg-primary/5 font-headline text-[12px] font-bold transition-all cursor-pointer text-center"
+              className="py-2 rounded-xl border border-primary text-primary hover:bg-primary/5 font-headline text-[11.5px] font-bold transition-all cursor-pointer text-center"
             >
-              查看完整体质报告
+              体质报告
+            </button>
+            <button 
+              onClick={() => onNavigate('AI_ADVISOR')}
+              className="py-2 rounded-xl border border-secondary-fixed text-on-surface hover:bg-secondary-container/30 font-headline text-[11.5px] font-bold transition-all cursor-pointer text-center"
+            >
+              本草AI咨询
             </button>
             <button 
               onClick={handleUpdateVitals}
-              className="flex-1 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary/95 font-headline text-[12px] font-bold transition-all cursor-pointer text-center"
+              className="py-2 rounded-xl bg-primary text-on-primary hover:bg-primary/95 font-headline text-[11.5px] font-bold transition-all cursor-pointer text-center"
             >
-              更新健康体征
+              更新体征
             </button>
           </div>
         </section>

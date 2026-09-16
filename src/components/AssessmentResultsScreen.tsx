@@ -7,7 +7,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScreenType, UserProfile, HealthArchive, HerbProduct, DietRecipe } from '../types';
 import { PRODUCTS, RECIPES } from '../data/mockData';
-import { AIAdvisorScreen } from './AIAdvisorScreen';
 
 interface WeeklyReportData {
   weeklyTrendSummary: string;
@@ -35,8 +34,6 @@ export const AssessmentResultsScreen: React.FC<AssessmentResultsScreenProps> = (
   onSelectProductById,
   onAddToCart,
 }) => {
-  const [selectedTab, setSelectedTab] = useState<'ANALYSIS' | 'CHAT'>('ANALYSIS');
-  
   // Weekly report states
   const [weeklyReport, setWeeklyReport] = useState<WeeklyReportData | null>(null);
   const [loadingReport, setLoadingReport] = useState<boolean>(false);
@@ -121,39 +118,31 @@ export const AssessmentResultsScreen: React.FC<AssessmentResultsScreenProps> = (
   };
 
   return (
-    <div className="bg-background text-on-background font-body min-h-screen pt-20 pb-28">
-      {/* Tab Selectors at top */}
-      <div className="max-w-lg mx-auto md:max-w-2xl px-5 mb-5 flex gap-2">
+    <div className="bg-background text-on-background font-body min-h-screen pt-18 pb-28">
+      {/* Module Title & Banner */}
+      <div className="max-w-lg mx-auto md:max-w-2xl px-5 mb-4 flex items-center justify-between">
+        <div>
+          <h2 className="font-headline text-[18px] font-bold text-on-surface flex items-center gap-2">
+            体质分析报告
+            <span className="bg-primary/10 text-primary text-[11px] font-sans font-semibold px-2 py-0.5 rounded-full">
+              九种体质辨识
+            </span>
+          </h2>
+          <p className="font-sans text-[12px] text-on-surface-variant">
+            中医九分法辨识 · 脏腑气血分析 · 智能调理指南
+          </p>
+        </div>
         <button
-          onClick={() => setSelectedTab('ANALYSIS')}
-          className={`flex-1 py-3 text-center rounded-xl font-headline font-semibold text-[13px] tracking-wide transition-all cursor-pointer ${
-            selectedTab === 'ANALYSIS'
-              ? 'bg-primary text-on-primary shadow-md'
-              : 'bg-surface border border-outline-variant text-on-surface-variant hover:bg-surface-container-low'
-          }`}
+          onClick={() => onNavigate('AI_ADVISOR')}
+          className="flex items-center gap-1.5 bg-secondary-container hover:bg-secondary-fixed/50 text-on-secondary-container px-3 py-1.5 rounded-xl font-headline text-[12px] font-bold transition-all shadow-xs cursor-pointer active:scale-95 flex-shrink-0"
+          title="前往本草 AI 在线咨询独立模块"
         >
-          体质分析报告
-        </button>
-        <button
-          onClick={() => setSelectedTab('CHAT')}
-          className={`flex-1 py-3 text-center rounded-xl font-headline font-semibold text-[13px] tracking-wide transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-            selectedTab === 'CHAT'
-              ? 'bg-primary text-on-primary shadow-md'
-              : 'bg-surface border border-outline-variant text-on-surface-variant hover:bg-surface-container-low'
-          }`}
-        >
-          <span className="material-symbols-outlined text-[16px]">psychology</span>
-          本草 AI 咨询
+          <span className="material-symbols-outlined text-[16px] text-primary">psychology</span>
+          <span>问诊AI</span>
         </button>
       </div>
 
-      {selectedTab === 'CHAT' ? (
-        <AIAdvisorScreen 
-          userProfile={userProfile} 
-          healthArchive={healthArchive} 
-        />
-      ) : (
-        <main className="px-5 max-w-lg mx-auto md:max-w-2xl flex flex-col gap-6 animate-fade-in">
+      <main className="px-5 max-w-lg mx-auto md:max-w-2xl flex flex-col gap-6 animate-fade-in">
           {/* Main Score Ring Hero */}
           <section className="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow border border-surface-container-low flex flex-col items-center text-center relative overflow-hidden">
             <div className="absolute top-4 right-4 flex gap-2">
@@ -586,20 +575,30 @@ export const AssessmentResultsScreen: React.FC<AssessmentResultsScreenProps> = (
             </div>
           </section>
 
-          {/* Bottom Call to Actions */}
-          <div className="pt-2 text-center">
-            <p className="font-sans text-[12px] text-outline">
-              对评估有任何疑问？
-              <button 
-                onClick={() => setSelectedTab('CHAT')}
-                className="text-primary hover:underline font-bold ml-1 cursor-pointer"
-              >
-                开启本草AI助手在线咨询
-              </button>
-            </p>
-          </div>
+          {/* Bottom Call to Actions - Link to TCM AI Consultation Module */}
+          <section className="bg-gradient-to-r from-surface-container-lowest to-secondary-container/20 rounded-2xl p-4 border border-secondary-fixed-dim/30 shadow-xs flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-on-secondary shadow-sm flex-shrink-0">
+                <span className="material-symbols-outlined text-[20px]">psychology</span>
+              </div>
+              <div>
+                <h4 className="font-headline text-[13.5px] font-bold text-on-surface">
+                  对体质报告或用药配伍有疑问？
+                </h4>
+                <p className="font-sans text-[11.5px] text-on-surface-variant">
+                  进入「本草 AI 咨询」独立模块，与AI中医师一对一问答
+                </p>
+              </div>
+            </div>
+            <button 
+              onClick={() => onNavigate('AI_ADVISOR')}
+              className="bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container px-3.5 py-2 rounded-xl font-headline text-[12px] font-bold cursor-pointer transition-all shadow-xs active:scale-95 flex items-center gap-1 flex-shrink-0"
+            >
+              <span>立即咨询</span>
+              <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </button>
+          </section>
         </main>
-      )}
     </div>
   );
 };

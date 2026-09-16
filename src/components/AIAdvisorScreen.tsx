@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { UserProfile, HealthArchive } from '../types';
+import { UserProfile, HealthArchive, ScreenType } from '../types';
 
 interface Message {
   id: string;
@@ -16,21 +16,22 @@ interface Message {
 interface AIAdvisorScreenProps {
   userProfile: UserProfile;
   healthArchive: HealthArchive;
+  onNavigate?: (screen: ScreenType) => void;
 }
 
-export const AIAdvisorScreen: React.FC<AIAdvisorScreenProps> = ({ userProfile, healthArchive }) => {
+export const AIAdvisorScreen: React.FC<AIAdvisorScreenProps> = ({ userProfile, healthArchive, onNavigate }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMsg, setInputMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const initialGreeting = `您好，${userProfile.name}！我是您的专属“本草AI助手”。
+  const initialGreeting = `您好！我是您的专属“本草AI问诊助手”。
 
-看到您当前的体质评估为「${healthArchive.bodyType}」倾向，平时有怕冷、易劳累的表现。此外，您的档案中记录了正在服用的西药「${(healthArchive.answers.westernMeds || []).join(", ") || "无"}」。
+当前系统已同步您的体质评估档案为「${healthArchive.bodyType}」倾向，平时常见畏寒肢冷、身重神疲等特点。此外，您档案中记录的西药为「${(healthArchive.answers.westernMeds || []).join(", ") || "暂无记录"}」。
 
-在中医药膳配伍中，服药避忌非常关键。例如「阿司匹林」与「华法林」均属于强效抗凝药，若在此时自行搭配「丹参」或「人参」，会严重增加内出血和消化道粘膜受损的风险！
+在中医药膳配伍中，服药避忌非常关键。例如「阿司匹林」与「华法林」属于强效抗凝药物，若自行盲目搭配「丹参」或大剂量「人参」，可能会增加内出血或消化道黏膜受损风险！
 
-今天想咨询我关于「${healthArchive.bodyType}」体质的中医调理药膳、配伍禁忌，或是如何安全服用西药中药吗？`;
+今天想咨询我关于「${healthArchive.bodyType}」体质的节气药膳食疗、配伍安全禁忌，还是辨证用药指导？`;
 
   useEffect(() => {
     // Load initial greeting
@@ -41,7 +42,7 @@ export const AIAdvisorScreen: React.FC<AIAdvisorScreenProps> = ({ userProfile, h
         content: initialGreeting,
       }
     ]);
-  }, []);
+  }, [healthArchive.bodyType]);
 
   useEffect(() => {
     scrollToBottom();
@@ -59,26 +60,27 @@ export const AIAdvisorScreen: React.FC<AIAdvisorScreenProps> = ({ userProfile, h
       ...messages,
       { id: userMsgId, role: 'user', content: textToSend }
     ];
-
     setMessages(newMessages);
     setInputMsg('');
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/tcm-chat', {
+      const response = await fetch('/api/advisor/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: newMessages.map(m => ({ role: m.role, content: m.content })),
-          userProfile: userProfile,
-          healthArchive: healthArchive
+          userContext: {
+            bodyType: healthArchive.bodyType,
+            score: healthArchive.score,
+            westernMeds: healthArchive.answers.westernMeds || [],
+            tongueDetails: healthArchive.answers.tongueFeatures || "淡白舌、薄白腻苔",
+          }
         })
       });
 
       if (!response.ok) {
-        throw new Error('网络请求异常，请稍后再试');
+        throw new Error('Network response was not ok');
       }
 
       const data = await response.json();
@@ -87,12 +89,11 @@ export const AIAdvisorScreen: React.FC<AIAdvisorScreenProps> = ({ userProfile, h
         {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: data.text,
-          isMock: data.isMock
+          content: data.reply || '抱歉，暂时未能获取到中医师AI的回复，请稍后再试。'
         }
       ]);
-    } catch (error: any) {
-      console.error("AI Error:", error);
+    } catch {
+      // Graceful fallback response
       setMessages(prev => [
         ...prev,
         {
@@ -112,121 +113,162 @@ export const AIAdvisorScreen: React.FC<AIAdvisorScreenProps> = ({ userProfile, h
     { label: '有什么食疗能改善怕冷和重感？', q: '我总是手脚发凉、全身沉重无力，中医有哪些简单易行的食疗粥或者代茶饮推荐？' },
   ];
 
+  const handleResetChat = () => {
+    setMessages([
+      {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: initialGreeting,
+      }
+    ]);
+  };
+
   return (
-    <div id="ai-advisor-section" className="max-w-lg mx-auto md:max-w-2xl px-5 flex flex-col h-[calc(100vh-14rem)] bg-surface-container-lowest rounded-2xl overflow-hidden ambient-shadow border border-surface-container-low">
-      {/* Advisor Header */}
-      <div className="px-4 py-3 bg-primary-container text-on-primary-container border-b border-surface-container flex items-center gap-2.5">
-        <div className="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center text-primary shadow-sm">
-          <span className="material-symbols-outlined text-[20px]">psychology</span>
-        </div>
-        <div>
-          <h4 className="font-headline text-[14px] font-bold">本草 AI 在线咨询助手</h4>
-          <span className="text-[10px] opacity-80 font-sans">精通传统伤寒金匮医理与现代临床交互分析</span>
-        </div>
-      </div>
-
-      {/* Messages Scroll Log */}
-      <div className="flex-grow overflow-y-auto p-4 space-y-4 no-scrollbar">
-        {messages.map((msg) => {
-          const isAI = msg.role === 'assistant';
-          return (
-            <div 
-              key={msg.id} 
-              className={`flex items-start gap-2.5 max-w-[88%] ${isAI ? 'mr-auto' : 'ml-auto flex-row-reverse'}`}
-            >
-              {isAI ? (
-                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-on-secondary shadow-sm flex-shrink-0">
-                  <span className="material-symbols-outlined text-[16px]">psychology</span>
-                </div>
-              ) : (
-                <img 
-                  referrerPolicy="no-referrer"
-                  src={userProfile.avatar} 
-                  alt={userProfile.name} 
-                  className="w-8 h-8 rounded-full object-cover flex-shrink-0 border border-outline/20"
-                />
-              )}
-
-              <div className={`p-3 rounded-2xl font-sans text-[13px] leading-relaxed shadow-sm relative ${
-                isAI 
-                  ? 'bg-surface-container-low text-on-surface rounded-tl-none border border-outline-variant/50' 
-                  : 'bg-primary text-on-primary rounded-tr-none'
-              }`}>
-                {msg.isMock && (
-                  <span className="absolute -top-4 right-1 text-[9px] bg-tertiary-container/30 text-tertiary px-1.5 py-0.2 rounded font-sans scale-90">
-                    智能模拟
-                  </span>
-                )}
-                {/* Formatting paragraphs and lists nicely */}
-                <div className="whitespace-pre-wrap break-words">
-                  {msg.content}
-                </div>
-              </div>
+    <div className="bg-background text-on-background font-body min-h-screen pt-16 pb-24 px-3 sm:px-4 flex flex-col items-center">
+      <div id="ai-advisor-section" className="w-full max-w-lg md:max-w-2xl flex flex-col h-[calc(100dvh-10.5rem)] bg-surface-container-lowest rounded-2xl overflow-hidden ambient-shadow border border-surface-container-low">
+        {/* Advisor Header */}
+        <div className="px-4 py-3 bg-primary-container text-on-primary-container border-b border-surface-container flex items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center text-primary shadow-sm flex-shrink-0">
+              <span className="material-symbols-outlined text-[20px]">psychology</span>
             </div>
-          );
-        })}
-
-        {/* Pulsing AI thinking spinner */}
-        {isLoading && (
-          <div className="flex items-start gap-2.5 mr-auto max-w-[85%]">
-            <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-on-secondary animate-pulse shadow-sm">
-              <span className="material-symbols-outlined text-[16px]">psychology</span>
-            </div>
-            <div className="p-3 bg-surface-container-low text-on-surface-variant rounded-2xl rounded-tl-none border border-outline-variant/30 flex items-center gap-1.5 shadow-sm">
-              <div className="flex gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce delay-100"></span>
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce delay-200"></span>
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce delay-300"></span>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <h4 className="font-headline text-[14px] font-bold">本草 AI 在线咨询</h4>
+                <span className="bg-secondary text-on-secondary text-[9px] font-sans font-bold px-1.5 py-0.2 rounded-full">
+                  独立问诊
+                </span>
               </div>
-              <span className="font-sans text-[11.5px] italic">本草AI正在遣方研药，请稍候...</span>
+              <span className="text-[10px] opacity-85 font-sans">
+                已同步体质：{healthArchive.bodyType} · 药理交互深度排查
+              </span>
             </div>
           </div>
-        )}
 
-        <div ref={messagesEndRef} />
-      </div>
+          <div className="flex items-center gap-1.5">
+            {onNavigate && (
+              <button 
+                onClick={() => onNavigate('ASSESSMENT_RESULTS')}
+                className="flex items-center gap-1 bg-surface/90 hover:bg-surface text-primary border border-secondary-fixed/50 px-2.5 py-1 rounded-lg text-[11px] font-headline font-bold shadow-xs transition-colors cursor-pointer"
+                title="查看体质分析报告模块"
+              >
+                <span className="material-symbols-outlined text-[14px]">assignment</span>
+                <span>体质报告</span>
+              </button>
+            )}
+            <button
+              onClick={handleResetChat}
+              className="p-1 text-on-primary-container/70 hover:text-on-primary-container rounded-lg hover:bg-surface/30 transition-colors cursor-pointer"
+              title="清空并重置对话"
+            >
+              <span className="material-symbols-outlined text-[18px]">refresh</span>
+            </button>
+          </div>
+        </div>
 
-      {/* Preset Questions Slider */}
-      <div className="px-4 py-2 border-t border-surface-container-low bg-surface/50 overflow-x-auto no-scrollbar flex gap-2 flex-shrink-0">
-        {presetQuestions.map((pq, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => sendMessage(pq.q)}
-            disabled={isLoading}
-            className="flex-shrink-0 px-3 py-1.5 bg-surface border border-outline-variant rounded-full font-headline text-[11px] font-medium text-on-surface hover:border-primary transition-all cursor-pointer whitespace-nowrap shadow-sm disabled:opacity-50"
+        {/* Messages Scroll Log */}
+        <div className="flex-grow overflow-y-auto p-4 space-y-4 no-scrollbar">
+          {messages.map((msg) => {
+            const isAI = msg.role === 'assistant';
+            return (
+              <div 
+                key={msg.id} 
+                className={`flex items-start gap-2.5 max-w-[88%] ${isAI ? 'mr-auto' : 'ml-auto flex-row-reverse'}`}
+              >
+                {isAI ? (
+                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-on-secondary shadow-sm flex-shrink-0">
+                    <span className="material-symbols-outlined text-[16px]">psychology</span>
+                  </div>
+                ) : (
+                  <img 
+                    referrerPolicy="no-referrer"
+                    src={userProfile.avatar} 
+                    alt={userProfile.name} 
+                    className="w-8 h-8 rounded-full object-cover flex-shrink-0 border border-outline/20"
+                  />
+                )}
+
+                <div className={`p-3 rounded-2xl font-sans text-[13px] leading-relaxed shadow-sm relative ${
+                  isAI 
+                    ? 'bg-surface-container-low text-on-surface rounded-tl-none border border-outline-variant/50' 
+                    : 'bg-primary text-on-primary rounded-tr-none'
+                }`}>
+                  {msg.isMock && (
+                    <span className="absolute -top-4 right-1 text-[9px] bg-tertiary-container/30 text-tertiary px-1.5 py-0.2 rounded font-sans scale-90">
+                      智能模拟
+                    </span>
+                  )}
+                  {/* Formatting paragraphs and lists nicely */}
+                  <div className="whitespace-pre-wrap break-words">
+                    {msg.content}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Pulsing AI thinking spinner */}
+          {isLoading && (
+            <div className="flex items-start gap-2.5 mr-auto max-w-[85%]">
+              <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-on-secondary animate-pulse shadow-sm">
+                <span className="material-symbols-outlined text-[16px]">psychology</span>
+              </div>
+              <div className="p-3 bg-surface-container-low text-on-surface-variant rounded-2xl rounded-tl-none border border-outline-variant/30 flex items-center gap-1.5 shadow-sm">
+                <div className="flex gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce delay-100"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce delay-200"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce delay-300"></span>
+                </div>
+                <span className="font-sans text-[11.5px] italic">本草AI正在遣方研药，请稍候...</span>
+              </div>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Preset Questions Slider */}
+        <div className="px-4 py-2 border-t border-surface-container-low bg-surface/50 overflow-x-auto no-scrollbar flex gap-2 flex-shrink-0">
+          {presetQuestions.map((pq, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => sendMessage(pq.q)}
+              disabled={isLoading}
+              className="flex-shrink-0 px-3 py-1.5 bg-surface border border-outline-variant rounded-full font-headline text-[11px] font-medium text-on-surface hover:border-primary transition-all cursor-pointer whitespace-nowrap shadow-sm disabled:opacity-50"
+            >
+              {pq.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Message Inputs Footer */}
+        <div className="p-3 border-t border-surface-container flex-shrink-0 bg-surface/80 backdrop-blur-md">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              sendMessage(inputMsg);
+            }}
+            className="flex gap-2"
           >
-            {pq.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Message Inputs Footer */}
-      <div className="p-3 border-t border-surface-container flex-shrink-0 bg-surface/80 backdrop-blur-md">
-        <form 
-          onSubmit={(e) => {
-            e.preventDefault();
-            sendMessage(inputMsg);
-          }}
-          className="flex gap-2"
-        >
-          <input 
-            type="text"
-            value={inputMsg}
-            onChange={(e) => setInputMsg(e.target.value)}
-            disabled={isLoading}
-            placeholder="向本草AI提问，如：胃痛如何服药调养..."
-            className="flex-grow bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-3.5 py-2.5 text-[13px] outline-none transition-colors disabled:opacity-50"
-          />
-          <button 
-            type="submit"
-            disabled={!inputMsg.trim() || isLoading}
-            className="bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container px-4 py-2.5 rounded-xl font-headline text-[13px] font-bold flex items-center justify-center cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="发送消息"
-          >
-            <span className="material-symbols-outlined text-[18px]">send</span>
-          </button>
-        </form>
+            <input 
+              type="text"
+              value={inputMsg}
+              onChange={(e) => setInputMsg(e.target.value)}
+              disabled={isLoading}
+              placeholder="向本草AI提问，如：胃痛如何服药调养、食物配伍禁忌..."
+              className="flex-grow bg-surface border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-3.5 py-2.5 text-[13px] outline-none transition-colors disabled:opacity-50"
+            />
+            <button 
+              type="submit"
+              disabled={!inputMsg.trim() || isLoading}
+              className="bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container px-4 py-2.5 rounded-xl font-headline text-[13px] font-bold flex items-center justify-center cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="发送消息"
+            >
+              <span className="material-symbols-outlined text-[18px]">send</span>
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

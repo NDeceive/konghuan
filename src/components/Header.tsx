@@ -17,14 +17,16 @@ export const Header: React.FC<HeaderProps> = ({ currentScreen, onNavigate, userP
     currentScreen === 'HOME' || 
     currentScreen === 'SHOP' || 
     currentScreen === 'PROFILE' || 
-    currentScreen === 'ASSESSMENT_RESULTS';
+    currentScreen === 'ASSESSMENT_RESULTS' ||
+    currentScreen === 'AI_ADVISOR';
 
   const getTitle = () => {
     switch (currentScreen) {
       case 'LOGIN': return '登录 - 颐膳坊';
       case 'HOME': return '颐膳坊';
       case 'STEPPER': return '完善健康档案';
-      case 'ASSESSMENT_RESULTS': return 'AI 健康评估结果';
+      case 'ASSESSMENT_RESULTS': return '体质分析报告';
+      case 'AI_ADVISOR': return '本草 AI 咨询';
       case 'RISK_DETAILS': return '药食风险详情';
       case 'DIET_DETAIL': return '节气药膳推荐';
       case 'SHOP': return '道地商城';

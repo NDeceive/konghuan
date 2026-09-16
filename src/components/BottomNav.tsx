@@ -18,8 +18,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate,
 
   const tabs = [
     { id: 'HOME', label: '首页', icon: 'home', filledIcon: 'home' },
-    { id: 'ASSESSMENT_RESULTS', label: '健康评估', icon: 'health_and_safety', filledIcon: 'health_and_safety' },
-    { id: 'AI_ADVICE', label: 'AI 建议', icon: 'psychology', filledIcon: 'psychology' }, // Custom sub-section in results / home
+    { id: 'ASSESSMENT_RESULTS', label: '体质报告', icon: 'assignment', filledIcon: 'assignment' },
+    { id: 'AI_ADVISOR', label: '本草咨询', icon: 'psychology', filledIcon: 'psychology' },
     { id: 'SHOP', label: '道地商城', icon: 'local_pharmacy', filledIcon: 'local_pharmacy' },
     { id: 'PROFILE', label: '我的', icon: 'person', filledIcon: 'person' },
   ];
@@ -28,6 +28,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate,
   const getActiveTab = () => {
     if (currentScreen === 'HOME') return 'HOME';
     if (currentScreen === 'ASSESSMENT_RESULTS') return 'ASSESSMENT_RESULTS';
+    if (currentScreen === 'AI_ADVISOR') return 'AI_ADVISOR';
     if (currentScreen === 'SHOP' || currentScreen === 'PRODUCT_DETAIL') return 'SHOP';
     if (currentScreen === 'PROFILE') return 'PROFILE';
     return '';
@@ -38,23 +39,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate,
   return (
     <nav className="fixed bottom-0 left-0 w-full z-45 flex justify-around items-center px-4 py-2 pb-safe bg-surface/90 backdrop-blur-lg border-t border-surface-container shadow-[0_-4px_12px_rgba(1,45,29,0.04)] rounded-t-xl transition-all duration-300">
       {tabs.map((tab) => {
-        // SPECIAL AI ADVICE routing: let's route it or trigger it
-        const isActive = activeTab === tab.id || (tab.id === 'AI_ADVICE' && currentScreen === 'ASSESSMENT_RESULTS');
+        const isActive = activeTab === tab.id;
         
         const handleClick = () => {
-          if (tab.id === 'AI_ADVICE') {
-            // Take to Assessment results screen, with AI chat anchored or focused!
-            onNavigate('ASSESSMENT_RESULTS');
-            // We can also trigger state update or scroll
-            setTimeout(() => {
-              const el = document.getElementById('ai-advisor-section');
-              if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
-            }, 100);
-          } else {
-            onNavigate(tab.id as ScreenType);
-          }
+          onNavigate(tab.id as ScreenType);
         };
 
         return (

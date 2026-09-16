@@ -298,16 +298,54 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </div>
             <span className="material-symbols-outlined text-4xl text-secondary-fixed opacity-95">health_metrics</span>
           </div>
-          <button 
-            id="btn-start-assess"
-            onClick={() => handleQuickEntry(1)}
-            className="w-full bg-secondary text-on-secondary font-headline text-[14px] py-3 rounded-xl hover:bg-secondary-fixed hover:text-on-secondary-fixed-variant transition-all flex items-center justify-center gap-1.5 font-bold cursor-pointer shadow-md active:scale-99"
-          >
-            开始评估 <span className="material-symbols-outlined text-sm">arrow_forward</span>
-          </button>
+          <div className="flex gap-2.5">
+            <button 
+              id="btn-start-assess"
+              onClick={() => handleQuickEntry(1)}
+              className="flex-1 bg-secondary text-on-secondary font-headline text-[13.5px] py-2.5 rounded-xl hover:bg-secondary-fixed hover:text-on-secondary-fixed-variant transition-all flex items-center justify-center gap-1 font-bold cursor-pointer shadow-md active:scale-99"
+            >
+              开始评估 <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+            <button 
+              id="btn-view-constitution-report"
+              onClick={() => onNavigate('ASSESSMENT_RESULTS')}
+              className="flex-1 bg-surface-container-lowest text-primary border border-secondary-fixed/50 font-headline text-[13.5px] py-2.5 rounded-xl hover:bg-surface-container-low transition-all flex items-center justify-center gap-1 font-bold cursor-pointer shadow-sm active:scale-99"
+            >
+              <span className="material-symbols-outlined text-sm">assignment</span>
+              查看体质报告
+            </button>
+          </div>
         </div>
         {/* Decorative wave/pulse graphic */}
         <div className="absolute bottom-0 right-0 w-full h-1/2 opacity-25 pointer-events-none" style={{ background: "radial-gradient(circle at 100% 100%, #cee9d3 0%, transparent 60%)" }}></div>
+      </section>
+
+      {/* Independent TCM AI Consultation Module Card */}
+      <section 
+        id="btn-tcm-ai-consultation"
+        onClick={() => onNavigate('AI_ADVISOR')}
+        className="mb-6 bg-surface-container-lowest rounded-2xl p-4 ambient-shadow border border-secondary-fixed/40 hover:border-primary transition-all cursor-pointer flex items-center justify-between group"
+      >
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-on-secondary shadow-sm group-hover:scale-105 transition-transform flex-shrink-0">
+            <span className="material-symbols-outlined text-[24px]">psychology</span>
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="font-headline font-bold text-[14.5px] text-on-surface">本草 AI 在线咨询</h4>
+              <span className="bg-primary/10 text-primary text-[10px] font-sans font-bold px-2 py-0.5 rounded-full">
+                独立问诊
+              </span>
+            </div>
+            <p className="font-sans text-[12px] text-on-surface-variant mt-0.5">
+              名中医思维问答 · 药理交互排查 · 辨证食疗指导
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1 text-primary font-headline text-[12px] font-bold flex-shrink-0">
+          <span>去咨询</span>
+          <span className="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+        </div>
       </section>
 
       {/* 5-Column Quick Entry Row (体质问卷 + 舌诊上传 + 病例 OCR + 西药记录 + 硬件体征) */}

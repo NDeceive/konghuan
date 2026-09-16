@@ -12,6 +12,7 @@ import { LoginScreen } from './components/LoginScreen';
 import { HomeScreen } from './components/HomeScreen';
 import { StepperScreen } from './components/StepperScreen';
 import { AssessmentResultsScreen } from './components/AssessmentResultsScreen';
+import { AIAdvisorScreen } from './components/AIAdvisorScreen';
 import { RiskAnalysisScreen } from './components/RiskAnalysisScreen';
 import { DietDetailScreen } from './components/DietDetailScreen';
 import { ShopScreen } from './components/ShopScreen';
@@ -225,6 +226,14 @@ export default function App() {
             onSelectRecipeById={handleSelectRecipeById}
             onSelectProductById={handleSelectProductById}
             onAddToCart={handleAddToCart}
+          />
+        )}
+
+        {currentScreen === 'AI_ADVISOR' && userProfile && (
+          <AIAdvisorScreen 
+            userProfile={userProfile}
+            healthArchive={healthArchive}
+            onNavigate={handleNavigate}
           />
         )}
 

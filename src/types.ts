@@ -8,6 +8,7 @@ export type ScreenType =
   | 'HOME'
   | 'STEPPER'
   | 'ASSESSMENT_RESULTS'
+  | 'AI_ADVISOR'
   | 'RISK_DETAILS'
   | 'DIET_DETAIL'
   | 'SHOP'

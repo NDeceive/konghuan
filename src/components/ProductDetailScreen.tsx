@@ -184,7 +184,7 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({
         <div className="max-w-lg mx-auto md:max-w-2xl flex gap-3">
           {/* Consulting button */}
           <button 
-            onClick={() => onNavigate('ASSESSMENT_RESULTS')}
+            onClick={() => onNavigate('AI_ADVISOR')}
             className="px-4 py-3 rounded-xl border border-outline bg-surface text-on-surface hover:bg-surface-container-low flex flex-col items-center justify-center cursor-pointer flex-shrink-0"
             title="在线咨询AI助手"
           >
